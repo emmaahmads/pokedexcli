@@ -17,7 +17,7 @@ type config struct {
 }
 
 func main() {
-	client := pokeapi.NewClient(5 * time.Second)
+	client := pokeapi.NewClient(5 * time.Minute)
 
 	cfg := &config{
 		pokeapiClient: client,
@@ -36,7 +36,10 @@ func startRepl(cfg *config) {
 			cmdname, exists := getCommand()[out[0]]
 
 			if exists {
-				cmdname.callback(cfg)
+				err := cmdname.callback(cfg)
+				if err != nil {
+					fmt.Println(err)
+				}
 			}
 		}
 	}

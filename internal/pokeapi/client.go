@@ -31,7 +31,7 @@ type RespShallowLocations struct {
 
 // NewClient -
 func NewClient(timeout time.Duration) Client {
-	cache := pokecache.NewCache(5 * time.Minute)
+	cache := pokecache.NewCache(5 * time.Second)
 	return Client{
 		httpClient: http.Client{
 			Timeout: timeout,

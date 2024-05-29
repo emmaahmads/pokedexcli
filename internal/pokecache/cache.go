@@ -12,6 +12,7 @@ byte slice
 - array of character bytes - can represent a string */
 
 import (
+	"fmt"
 	"sync"
 	"time"
 )
@@ -27,6 +28,7 @@ type Cache struct {
 }
 
 func NewCache(interval time.Duration) Cache {
+	fmt.Println("NewCache creating")
 	c := Cache{
 		cache: make(map[string]cacheEntry),
 		mux:   &sync.Mutex{},
@@ -52,6 +54,7 @@ func (c *Cache) reap(now time.Time, last time.Duration) {
 	// delete older cache entries
 	for k, v := range c.cache {
 		if v.createdAt.Before(now.Add(-last)) {
+			//fmt.Println("Cache entry deleted")
 			delete(c.cache, k)
 		}
 	}
@@ -65,11 +68,15 @@ func (c *Cache) Add(key string, value []byte) {
 		createdAt: time.Now().UTC(),
 		val:       value,
 	}
+	fmt.Println(string("\033[31m"), "Cache entry added", string("\033[0m"))
 }
 
 func (c *Cache) Get(key string) ([]byte, bool) {
 	c.mux.Lock()
 	defer c.mux.Unlock()
 	val, ok := c.cache[key]
+	if ok {
+		fmt.Println(string("\033[32m"), "Cache entry retrieved", string("\033[0m"))
+	}
 	return val.val, ok
 }
