@@ -7,10 +7,10 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(cfg *config) error
+	callback    func(cfg *config, option string) error
 }
 
-func commandMap(cfg *config) error {
+func commandMap(cfg *config, option string) error {
 	// get location list
 
 	locations, err := cfg.pokeapiClient.ListLocations(cfg.nextLocationURL)
@@ -29,7 +29,7 @@ func commandMap(cfg *config) error {
 	return nil
 }
 
-func commandMapb(cfg *config) error {
+func commandMapb(cfg *config, option string) error {
 	if cfg.prevLocationURL == nil {
 		return fmt.Errorf("no previous location")
 	}

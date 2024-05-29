@@ -28,15 +28,19 @@ func main() {
 
 func startRepl(cfg *config) {
 	fmt.Println("Pokedex >")
+	option := ""
 	scan := bufio.NewScanner(os.Stdin)
 	for {
 		for scan.Scan() {
 			in := strings.ToLower(scan.Text())
 			out := strings.Fields(in)
 			cmdname, exists := getCommand()[out[0]]
+			if len(out) > 1 {
+				option = out[1]
+			}
 
 			if exists {
-				err := cmdname.callback(cfg)
+				err := cmdname.callback(cfg, option)
 				if err != nil {
 					fmt.Println(err)
 				}

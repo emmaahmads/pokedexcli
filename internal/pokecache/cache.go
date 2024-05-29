@@ -28,7 +28,6 @@ type Cache struct {
 }
 
 func NewCache(interval time.Duration) Cache {
-	fmt.Println("NewCache creating")
 	c := Cache{
 		cache: make(map[string]cacheEntry),
 		mux:   &sync.Mutex{},

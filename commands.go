@@ -27,15 +27,20 @@ func getCommand() map[string]cliCommand {
 			description: "Displays the previous 20 locations",
 			callback:    commandMapb,
 		},
+		"explore": {
+			name:        "explore",
+			description: "List all Pokemons in the area",
+			callback:    commandExplore,
+		},
 	}
 }
 
-func commandExit(cfg *config) error {
+func commandExit(cfg *config, option string) error {
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp(cfg *config) error {
+func commandHelp(cfg *config, option string) error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	for _, cmd := range getCommand() {

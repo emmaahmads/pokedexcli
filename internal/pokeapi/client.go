@@ -19,19 +19,9 @@ type Client struct {
 	httpClient http.Client
 }
 
-type RespShallowLocations struct {
-	Count    int     `json:"count"`
-	Next     *string `json:"next"`
-	Previous *string `json:"previous"`
-	Results  []struct {
-		Name string `json:"name"`
-		URL  string `json:"url"`
-	} `json:"results"`
-}
-
 // NewClient -
 func NewClient(timeout time.Duration) Client {
-	cache := pokecache.NewCache(5 * time.Second)
+	cache := pokecache.NewCache(10 * time.Second)
 	return Client{
 		httpClient: http.Client{
 			Timeout: timeout,
@@ -83,4 +73,48 @@ func (c *Client) ListLocations(pageURL *string) (RespShallowLocations, error) {
 		return locations, err
 	}
 	return locations, nil
+}
+
+// Explore locations
+func (c *Client) ExploreLocations(name *string) (RespShallowExploreLocations, error) {
+	url := baseURL + "/location-area"
+	pokemon_list := RespShallowExploreLocations{}
+
+	if name != nil {
+		url = url + "/" + *name
+	}
+
+	val, ok := c.cache.Get(url)
+	// check in cache
+	if !ok {
+		//make http request
+		req, err := http.NewRequest("GET", url, nil)
+		if err != nil {
+			return pokemon_list, err
+		}
+
+		//send http request
+		resp, err := c.httpClient.Do(req)
+		if err != nil {
+			return pokemon_list, err
+		}
+
+		//close the io interface to avoid resources leaks
+		defer resp.Body.Close()
+
+		//read the entire contents of an io.Reader into a byte slice
+		val, err = io.ReadAll(resp.Body) //ok = false
+		if err != nil {
+			return pokemon_list, err
+		}
+
+		c.cache.Add(url, val)
+	}
+
+	//unmarshal the byte slice into a struct
+	err := json.Unmarshal(val, &pokemon_list)
+	if err != nil {
+		return pokemon_list, err
+	}
+	return pokemon_list, nil
 }
