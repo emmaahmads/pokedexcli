@@ -3,7 +3,6 @@ package pokeapi
 import (
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 	"time"
 
@@ -50,11 +49,10 @@ func (c *Client) ListLocations(pageURL *string) (RespShallowLocations, error) {
 	if pageURL != nil {
 		url = *pageURL
 	}
-	log.Println("test 1")
+
 	val, ok := c.cache.Get(url)
 	// check in cache
 	if !ok {
-		log.Println("test 2")
 		//make http request
 		req, err := http.NewRequest("GET", url, nil)
 		if err != nil {
