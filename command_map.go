@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+)
 
 type cliCommand struct {
 	name        string
@@ -10,9 +13,11 @@ type cliCommand struct {
 
 func commandMap(cfg *config) error {
 	// get location list
+
 	locations, err := cfg.pokeapiClient.ListLocations(cfg.nextLocationURL)
 	if err != nil {
 		return err
+
 	}
 
 	cfg.nextLocationURL = locations.Next
@@ -26,12 +31,16 @@ func commandMap(cfg *config) error {
 }
 
 func commandMapb(cfg *config) error {
+	log.Println("test commandMapb")
 	if cfg.prevLocationURL == nil {
+		log.Println("test commandMapb 1")
 		return fmt.Errorf("no previous location")
 	}
 
 	// get location list
+	log.Println("test commandMapb 2")
 	locations, err := cfg.pokeapiClient.ListLocations(cfg.prevLocationURL)
+	log.Println("test commandMapb 3")
 	if err != nil {
 		return err
 	}
