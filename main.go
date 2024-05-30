@@ -14,13 +14,16 @@ type config struct {
 	pokeapiClient   pokeapi.Client
 	nextLocationURL *string
 	prevLocationURL *string
+	pokedex         pokeapi.Pokedex
 }
 
 func main() {
 	client := pokeapi.NewClient(5 * time.Minute)
+	pokedex := pokeapi.NewPokedex()
 
 	cfg := &config{
 		pokeapiClient: client,
+		pokedex:       pokedex,
 	}
 
 	startRepl(cfg)

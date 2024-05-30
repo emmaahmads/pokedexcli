@@ -118,3 +118,39 @@ func (c *Client) ExploreLocations(name *string) (RespShallowExploreLocations, er
 	}
 	return pokemon_list, nil
 }
+
+func (c *Client) GetPokemon(name *string) (RespPokemon, error) {
+	url := baseURL + "/pokemon"
+	pokemon := RespPokemon{}
+
+	if name != nil {
+		url = url + "/" + *name
+	}
+
+	//make http request
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return pokemon, err
+	}
+
+	//send http request
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return pokemon, err
+	}
+
+	//close the io interface to avoid resources leaks
+	defer resp.Body.Close()
+
+	//read the entire contents of an io.Reader into a byte slice
+	val, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return pokemon, err
+	}
+
+	err = json.Unmarshal(val, &pokemon)
+	if err != nil {
+		return pokemon, err
+	}
+	return pokemon, nil
+}
